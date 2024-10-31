@@ -4,6 +4,7 @@ import User from "../schema/user.schema.js";
 const protectRoute = async (req, res, next) => {
   try {
     const token = req.cookies.jwt;
+    console.log("Cookies received:", req.cookies); // Debug log
     if (!token) {
       return res
         .status(400)

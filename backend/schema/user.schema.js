@@ -3,22 +3,22 @@ import mongoose from "mongoose";
 const userSchema = new mongoose.Schema({
   fullName: {
     type: String,
-    require: true,
+    required: true,
   },
   username: {
     type: String,
-    require: true,
+    required: true,
     unique: true,
   },
   password: {
     type: String,
-    require: true,
+    required: true,
     minlength: 6,
   },
   gender: {
     type: String,
-    require: true,
-    emun: ["male", "female"],
+    required: true,
+    enum: ["male", "female"],
   },
   profilePic: {
     type: String,

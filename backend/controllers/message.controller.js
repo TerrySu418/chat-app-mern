@@ -1,5 +1,6 @@
 import Conversation from "../schema/conversation.schema.js";
 import Message from "../schema/message.schema.js";
+import { getReceiverSocketId, io } from "../socket/socket.js";
 
 export const sendMessage = async (req, res) => {
   try {
@@ -39,6 +40,13 @@ export const sendMessage = async (req, res) => {
     //This will run in parallel
     await Promise.all([conversation.save(), newMessage.save()]);
 
+    //SOCKET IO FUNCTIONALITY WILL GO HERE
+    const receiverSocketId = getReceiverSocketId(receiverId);
+    if (receiverSocketId) {
+      // io.to(<socket._id>).emit() used to send events to specific client
+      io.to(receiverSocketId).emit("newMessage", newMessage);
+    }
+
     res.status(201).json(newMessage);
   } catch (err) {
     console.log("Error in sendMessage Controller");
@@ -54,7 +62,7 @@ export const getMessage = async (req, res) => {
     const conversation = await Conversation.findOne({
       participants: { $all: [senderId, userToChatId] },
     }).populate("message"); // Assuming 'message' is the correct field name
-    
+
     if (!conversation) {
       return res.status(404).json({ error: "Conversation not found" });
     }
